@@ -9,7 +9,7 @@ class Genre(models.Model):
         help_text='Введите жанр книги',
     )
 
-    def __str__():
+    def __str__(self):
         return self.name
 
 
@@ -54,6 +54,10 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse('book_detail', args=[str(self.id)])
+
+    def display_genre(self):
+        return ', '.join([ genre.name for genre in self.genre.all()[:3] ])
+    display_genre.short_description = 'Genre'
     
 
 class BookInstance(models.Model):
@@ -75,10 +79,10 @@ class BookInstance(models.Model):
         blank=True,
     )
     LOAN_STATUS = (
-        ('m', 'Maintenance'),
-        ('o', 'On loan'),
-        ('a', 'Available'),
-        ('r', 'Reserved'),
+        ('m', 'Maintenance(тех. обслуживание)'),
+        ('o', 'On loan(выдана)'),
+        ('a', 'Available(доступна)'),
+        ('r', 'Reserved(зарезервирована)'),
     )
     status = models.CharField(
         max_length=1,
@@ -92,7 +96,7 @@ class BookInstance(models.Model):
         ordering = ['due_back']
 
     def __str__(self):
-        return '{1} ({2})'.format(self.id, self.book.title)
+        return '{0} ({1})'.format(self.id, self.book.title)
 
 
 class Author(models.Model):
